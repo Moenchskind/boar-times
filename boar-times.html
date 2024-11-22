@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boar Hunting Schedule</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('background-from-gptmini.png'); /* Platzhalter für das Hintergrundbild */
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .time-slot {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Boar Hunting and Thieves Catching Schedule</h1>
+        <p>Times to hunt and catch thieves:</p>
+        <div>
+            <h3>Friday</h3>
+            <div class="time-slot">15:00 (3 PM)</div>
+            <div class="time-slot">17:00 (5 PM)</div>
+            <div class="time-slot">22:00 (10 PM)</div>
+            <div class="time-slot">00:00 (Midnight)</div>
+
+            <h3>Saturday</h3>
+            <div class="time-slot">15:00 (3 PM)</div>
+            <div class="time-slot">17:00 (5 PM)</div>
+            <div class="time-slot">22:00 (10 PM)</div>
+            <div class="time-slot">00:00 (Midnight)</div>
+
+            <h3>Sunday</h3>
+            <div class="time-slot">15:00 (3 PM)</div>
+            <div class="time-slot">17:00 (5 PM)</div>
+            <div class="time-slot">22:00 (10 PM)</div>
+            <div class="time-slot">00:00 (Midnight)</div>
+
+            <h3>Monday</h3>
+            <div class="time-slot">15:00 (3 PM)</div>
+            <div class="time-slot">17:00 (5 PM)</div>
+            <div class="time-slot">22:00 (10 PM)</div>
+            <div class="time-slot">00:00 (Midnight)</div>
+        </div>
+        <button class="button" onclick="notifyUser()">Set Reminder</button>
+    </div>
+
+    <script>
+const eventTimes = [
+    { day: "Friday", hours: [15, 17, 22, 0] },
+    { day: "Saturday", hours: [15, 17, 22, 0] },
+    { day: "Sunday", hours: [15, 17, 22, 0] },
+    { day: "Monday", hours: [15, 17, 22, 0] }
+];
+
+function scheduleNotifications() {
+    const now = new Date();
+    eventTimes.forEach(event => {
+        event.hours.forEach(hour => {
+            const eventDate = new Date();
+            eventDate.setHours(hour === 0 ? 24 : hour, 0, 0, 0);
+
+            if (hour === 0) eventDate.setDate(eventDate.getDate() + 1);
+
+            const timeDifference = eventDate - now - 15 * 60 * 1000; // 15 Minuten vorher
+
+            if (timeDifference > 0) {
+                setTimeout(() => {
+                    notifyUser(event.day, hour);
+                }, timeDifference);
+            }
+        });
+    });
+}
+
+function notifyUser(day, hour) {
+    const formattedHour = hour === 0 ? "00:00 (Midnight)" : `${hour}:00`;
+    const message = `Reminder: The event on ${day} starts soon at ${formattedHour}!`;
+    if (Notification.permission === "granted") {
+        new Notification("Upcoming Event!", { body: message, icon: "https://via.placeholder.com/150" });
+    }
+}
+
+// Check notification permission and start scheduling
+if (Notification.permission === "granted") {
+    scheduleNotifications();
+} else {
+    Notification.requestPermission().then(permission => {
+        if (permission === "granted") scheduleNotifications();
+    });
+}
+
+    </script>
+</body>
+</html>
